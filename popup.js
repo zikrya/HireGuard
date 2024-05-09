@@ -1,11 +1,21 @@
-document.getElementById('analyzeButton').addEventListener('click', function() {
-    const userInput = document.getElementById('textInput').value;
-    if (!userInput) {
-        alert('Please paste the content into the textarea!');
-        return;
-    }
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('analyzeButton').addEventListener('click', function() {
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.scripting.executeScript({
+          target: {tabId: tabs[0].id},
+          function: () => document.body.innerText
+        }, (results) => {
+          // Check for errors
+          if (chrome.runtime.lastError || !results || !results.length) {
+            console.error('Script execution failed:', chrome.runtime.lastError);
+            return;
+          }
 
-    // Here you would normally call the API to analyze the text
-    console.log("Analyzing: ", userInput);
-    document.getElementById('result').innerText = "Analysis complete! (Placeholder result)";
-});
+          const pageText = results[0].result;
+
+  document.getElementById('textInput').value = pageText;
+  console.log("Text fetched: ", pageText);
+  });
+  });
+  });
+  });

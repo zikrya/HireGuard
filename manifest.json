@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "Job Check",
+    "name": "HireGuard",
     "version": "1.0",
     "description": "Analyze job postings and emails to detect scams",
     "permissions": ["activeTab", "scripting"],
