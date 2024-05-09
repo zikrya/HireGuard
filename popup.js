@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': 'sk-proj-lXArUT5esqOGMf7nvdvJT3BlbkFJET4Bp3ZVdh12x7fm6qTj'  // Replace YOUR_API_KEY_HERE with your actual OpenAI API key
+              'Authorization': ''  // Replace YOUR_API_KEY_HERE with your actual OpenAI API key
             },
             body: JSON.stringify({
               prompt: pageText,  // Or format your prompt with specific instructions
