@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector("form");
     form.addEventListener("submit", function(event) {
         event.preventDefault();
-        const userInput = document.getElementById('userInput').value;
+        const userInput = "Let me know if you think this email about a job offer, or job posting seems legit to you. Please start off with the word Legit (if you think it's alright) or Sounds Suspicious (if you found anything wrong about) and then you can give the reasonings why " + document.getElementById('userInput').value;
         fetch('http://localhost:3000/chat', {
             method: 'POST',
             headers: {
