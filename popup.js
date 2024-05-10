@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const pageText = results[0].result;
-            document.getElementById('textInput').value = pageText;
+            document.getElementById('userInput').value = pageText;
             console.log("Text fetched: ", pageText);
         });
     });
