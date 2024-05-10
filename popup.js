@@ -1,17 +1,37 @@
 document.addEventListener('DOMContentLoaded', function() {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.scripting.executeScript({
-            target: {tabId: tabs[0].id},
-            function: () => document.body.innerText
-        }, (results) => {
-            if (chrome.runtime.lastError || !results || !results.length) {
-                console.error('Script execution failed:', chrome.runtime.lastError);
-                return;
-            }
+        let url = tabs[0].url;
 
-            const pageText = results[0].result;
-            document.getElementById('userInput').value = pageText;
-            console.log("Text fetched: ", pageText);
+        // Create a button for user-driven selection on job board pages
+        const selectButton = document.createElement('button');
+        selectButton.textContent = 'Select Content';
+        document.body.appendChild(selectButton);
+
+        // Show the button only on specified job board pages
+        if (url.includes('indeed') || url.includes('linkedin') || url.includes('glassdoor')) {
+            selectButton.style.display = 'block';
+            selectButton.addEventListener('click', function() {
+                chrome.tabs.sendMessage(tabs[0].id, {action: "enableSelection"});
+            });
+        } else {
+            // Automatically extract content for non-job board pages such as emails
+            chrome.scripting.executeScript({
+                target: {tabId: tabs[0].id},
+                function: () => document.body.innerText,
+            }, (results) => {
+                if (chrome.runtime.lastError || !results || !results.length) {
+                    console.error('Script execution failed:', chrome.runtime.lastError);
+                    return;
+                }
+                document.getElementById('userInput').value = results[0].result;
+                console.log("Text fetched: ", results[0].result);
+            });
+        }
+
+        chrome.runtime.onMessage.addListener(function(message) {
+            if (message.type === 'selectedText') {
+                document.getElementById('userInput').value = message.text;
+            }
         });
     });
 
