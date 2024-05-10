@@ -1,48 +1,61 @@
 const express = require('express');
 const bodyParser = require("body-parser");
-const OpenAI = require('openai');
 const dotenv = require('dotenv');
+const cors = require('cors');
+const axios = require('axios');
 
 dotenv.config();
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 
-/*app.get('/', async (req, res) => {
-  const content = await main();
-  res.send(content);
-}); */
-
-/*app.get('/', (req, res) => {
+app.get('/', (req, res) => {
     res.send('Hello World!');
-  }); */
+});
 
-  app.get('/', async (req, res) => {
+async function chatGPT(input) {
     try {
-        const completion = await openai.chat.completions.create({
+        const data = JSON.stringify({
             model: "gpt-3.5-turbo",
             messages: [
                 { role: "system", content: "You are a helpful assistant." },
-                { role: "user", content: "Who won the world series in 2020?" },
-                { role: "assistant", content: "The Los Angeles Dodgers won the World Series in 2020." },
-                { role: "user", content: "Where was it played?" }
+                { role: "user", content: input }
             ]
         });
-        res.status(200).json(completion.data);
+
+        const config = {
+            method: 'post',
+            url: 'https://api.openai.com/v1/chat/completions',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+            },
+            data: data
+        };
+
+        const response = await axios(config);
+        return response.data;
     } catch (error) {
         console.error("Error processing the chat completion:", error);
+        return null;
+    }
+}
+
+app.post('/chat', async (req, res) => {
+    console.log("POST /chat accessed");
+    const userMessage = req.body.message || "What's JavaScript"; // Default message if none provided
+    const completion = await chatGPT(userMessage);
+    if (completion) {
+        res.status(200).json(completion);
+    } else {
         res.status(500).json({ message: "Failed to process chat completion" });
     }
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
-
-
