@@ -47,7 +47,7 @@ async function chatGPT(input) {
 
 app.post('/chat', async (req, res) => {
     console.log("POST /chat accessed");
-    const userMessage = req.body.message || "What's JavaScript"; // Default message if none provided
+    const userMessage = req.body.messages.find(msg => msg.role === "user").content;  // Extract user content
     const completion = await chatGPT(userMessage);
     if (completion) {
         res.status(200).json(completion);
