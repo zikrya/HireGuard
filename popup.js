@@ -18,10 +18,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector("form");
     form.addEventListener("submit", function(event) {
         event.preventDefault();
-        loadingBar.classList.remove('hidden');  // Show loading bar
-        loadingBar.style.width = '0%';  // Reset width
+        loadingBar.classList.remove('hidden');
+        loadingBar.style.width = '0%';
 
-        // Simulate gradual increase in loading bar as request is made
         setTimeout(() => { loadingBar.style.width = '50%'; }, 500);
 
         const userInput = "Let me know if you think this email about a job offer, or job posting seems legit to you. Please start off with the word Legit (if you think it's alright) or Sounds Suspicious (if you found anything wrong about) and then you can give the reasonings why " + document.getElementById('userInput').value;
@@ -35,12 +34,12 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             document.getElementById("message").textContent = data.choices[0].message.content;
-            loadingBar.style.width = '100%';  // Complete the loading bar
-            setTimeout(() => { loadingBar.classList.add('hidden'); }, 500);  // Hide loading bar after a brief delay
+            loadingBar.style.width = '100%';
+            setTimeout(() => { loadingBar.classList.add('hidden'); }, 500);
         })
         .catch(error => {
             console.error('Error:', error);
-            loadingBar.classList.add('hidden');  // Hide loading bar on error
+            loadingBar.classList.add('hidden');
         });
     });
 });
