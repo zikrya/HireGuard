@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Check</title>
+    <title>HireGuard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Job Check</h1>
-    <form>
-        <textarea type="textInput" id="userInput" placeholder="Ask a question..."></textarea>
-        <button type="submit">Send POST Request</button>
-        <p id="message"></p>
-    </form>
+    <div class="container">
+        <h1>HireGuard</h1>
+        <form>
+            <textarea class="hidden" type="textInput" id="userInput" placeholder="Ask a question..."></textarea>
+            <button type="submit">Legit Check?</button>
+            <p id="message"></p>
+        </form>
+        <div class="loading-bar hidden" id="loadingBar"></div>
+    </div>
     <script src="popup.js"></script>
 </body>
 </html>

@@ -1,43 +1,29 @@
 document.addEventListener('DOMContentLoaded', function() {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        let url = tabs[0].url;
-
-        // Create a button for user-driven selection on job board pages
-        const selectButton = document.createElement('button');
-        selectButton.textContent = 'Select Content';
-        document.body.appendChild(selectButton);
-
-        // Show the button only on specified job board pages
-        if (url.includes('indeed') || url.includes('linkedin') || url.includes('glassdoor')) {
-            selectButton.style.display = 'block';
-            selectButton.addEventListener('click', function() {
-                chrome.tabs.sendMessage(tabs[0].id, {action: "enableSelection"});
-            });
-        } else {
-            // Automatically extract content for non-job board pages such as emails
-            chrome.scripting.executeScript({
-                target: {tabId: tabs[0].id},
-                function: () => document.body.innerText,
-            }, (results) => {
-                if (chrome.runtime.lastError || !results || !results.length) {
-                    console.error('Script execution failed:', chrome.runtime.lastError);
-                    return;
-                }
-                document.getElementById('userInput').value = results[0].result;
-                console.log("Text fetched: ", results[0].result);
-            });
-        }
-
-        chrome.runtime.onMessage.addListener(function(message) {
-            if (message.type === 'selectedText') {
-                document.getElementById('userInput').value = message.text;
+        chrome.scripting.executeScript({
+            target: {tabId: tabs[0].id},
+            function: () => document.body.innerText
+        }, (results) => {
+            if (chrome.runtime.lastError || !results || !results.length) {
+                console.error('Script execution failed:', chrome.runtime.lastError);
+                return;
             }
+
+            const pageText = results[0].result;
+            document.getElementById('userInput').value = pageText;
+            console.log("Text fetched: ", pageText);
         });
     });
 
     const form = document.querySelector("form");
     form.addEventListener("submit", function(event) {
         event.preventDefault();
+        loadingBar.classList.remove('hidden');  // Show loading bar
+        loadingBar.style.width = '0%';  // Reset width
+
+        // Simulate gradual increase in loading bar as request is made
+        setTimeout(() => { loadingBar.style.width = '50%'; }, 500);
+
         const userInput = "Let me know if you think this email about a job offer, or job posting seems legit to you. Please start off with the word Legit (if you think it's alright) or Sounds Suspicious (if you found anything wrong about) and then you can give the reasonings why " + document.getElementById('userInput').value;
         fetch('http://localhost:3000/chat', {
             method: 'POST',
@@ -49,7 +35,12 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             document.getElementById("message").textContent = data.choices[0].message.content;
+            loadingBar.style.width = '100%';  // Complete the loading bar
+            setTimeout(() => { loadingBar.classList.add('hidden'); }, 500);  // Hide loading bar after a brief delay
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            loadingBar.classList.add('hidden');  // Hide loading bar on error
+        });
     });
 });
