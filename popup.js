@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => { loadingBar.style.width = '50%'; }, 500);
 
         const userInput = "Let me know if you think this email about a job offer, or job posting seems legit to you. Please start off with the word Legit (if you think it's alright) or Sounds Suspicious (if you found anything wrong about) and then you can give the reasonings why " + document.getElementById('userInput').value;
-        fetch('http://localhost:3000/chat', {
+        fetch('https://hireguard.onrender.com/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
