@@ -9,7 +9,10 @@ body {
     height: 100vh; /* Ensures the full height is utilized */
     box-sizing: border-box;
 }
-
+img {
+    width: 150px;
+    height: 150px;
+}
 .container {
     width: 100%; /* Ensures the container uses the full available width */
     max-width: none; /* Removes any max-width restrictions */
